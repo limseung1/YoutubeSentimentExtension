@@ -1,0 +1,28 @@
+{
+    "manifest_version": 3,
+    "name": "HuggingFace Text Analysis",
+    "version": "1.0",
+    "description": "Analyze text using HuggingFace Transformers",
+    "permissions": ["activeTab", "tabs"],
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "web_accessible_resources": [{ 
+        "resources": [
+            "/models/distilbert-base-uncased-finetuned-sst-2-english/tokenizer.json"
+        ],
+        "matches": ["<all_urls>"]
+    }],
+    "content_scripts": [{
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+    }],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'"
+    }
+}
+  

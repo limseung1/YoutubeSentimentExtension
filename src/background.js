@@ -1,6 +1,9 @@
 
 async function sendInitialize(sendResponse) {
-    if (await chrome.offscreen.hasDocument()) return;
+    if (await chrome.offscreen.hasDocument()) {
+        sendResponse( { initialized: false, success: true } )
+        return
+    }
     await chrome.offscreen.createDocument({
         url: "offscreen.html",
         reasons: ["BLOBS"],
@@ -12,10 +15,7 @@ async function sendInitialize(sendResponse) {
         action: "initialize"
     });
 
-    sendResponse({ 
-        received: true, 
-        success: result.success
-    });
+    sendResponse( { initialized: true, success: result.success } );
 }
 
 async function sendClassify(message, sendResponse) {

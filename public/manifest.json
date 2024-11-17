@@ -1,20 +1,25 @@
 {
     "manifest_version": 3,
-    "name": "HuggingFace Text Analysis",
+    "name": "YouTube Comment Analyzer",
     "version": "1.0",
-    "description": "Analyze text using HuggingFace Transformers",
-    "permissions": ["activeTab", "tabs"],
-    "background": {
-        "service_worker": "background.js",
+    "description": "Analyze YouTube comments using transformers",
+    "permissions": ["storage", "tabs", "offscreen"],
+    "host_permissions": ["https://*.youtube.com/*"],
+    "background": { 
+        "service_worker": "background.js", 
         "type": "module"
     },
+    "content_scripts": [
+        {
+            "matches": ["https://*.youtube.com/*"],
+            "js": ["content.js"]
+        }
+    ],
     "action": {
         "default_popup": "popup.html"
     },
     "web_accessible_resources": [{ 
-        "resources": [
-            "/models/distilbert-base-uncased-finetuned-sst-2-english/tokenizer.json"
-        ],
+        "resources": ["models/*"],
         "matches": ["<all_urls>"]
     }],
     "content_security_policy": {

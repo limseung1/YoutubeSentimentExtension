@@ -1,7 +1,9 @@
 import { getCommentElements, getCommentsContainer, countTotalComments, delay } from './comments'
+import { test_texts } from './test.js'
 
-  
 (async function execute() {
+
+    // initialize classifier
     const initStart = performance.now();
     await chrome.runtime.sendMessage({
         target: 'background',
@@ -9,20 +11,22 @@ import { getCommentElements, getCommentsContainer, countTotalComments, delay } f
     });
     console.log("Initialize runtime: ", performance.now() - initStart)
 
+    // inference in batch
     const infStart = performance.now();
     const response = await chrome.runtime.sendMessage({
         target: 'background',
         action: 'classify',
-        data: ["hello world", "my name is", "jack"]
+        data: test_texts
     });
-    console.log("Inference runtime: ", performance.now() - infStart)
+    console.log("Batch Inference runtime: ", performance.now() - infStart)
     console.log("Response: ", response)
 
-    
+
+
     // const commentsContainer = getCommentsContainer();
     // let previousCount = getCommentElements().length;
     // let currentAddedNodesCount = 0;
-    
+
     // const observer = new MutationObserver(async (mutations) => {
     //     const currentCount = getCommentElements().length;
     //     const totalCount = countTotalComments();
@@ -65,7 +69,5 @@ import { getCommentElements, getCommentsContainer, countTotalComments, delay } f
     //     attributes: false,      // don't observe attribute changes
     //     characterData: false    // don't observe text content changes
     // });
+    return true
 })();
-
-
- 

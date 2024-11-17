@@ -2,11 +2,9 @@ import { GoEmotionClassifier } from './classifier.js';
 
 let classifier = null;
 
-// Initialize classifier when the page loads
-async function initializeClassifier(sendResponse) {
+async function initialize(sendResponse) {
     classifier = new GoEmotionClassifier();
     await classifier.initialize();
-    console.log('Classifier initialized successfully');
 
     sendResponse({ 
         received: true, 
@@ -14,12 +12,12 @@ async function initializeClassifier(sendResponse) {
     });
 }
 
-async function handleMessage(message, sender, sendResponse) {
+async function classify(message, sendResponse) {
     try {
-        if (!classifier.session) throw new Error('Classifier not initialized');
+        if (!classifier.session) 
+            throw new Error('Classifier not initialized');
         
         const texts = message.data;
-
         let results = [];
         for (const text of texts) {
           try {
@@ -30,8 +28,6 @@ async function handleMessage(message, sender, sendResponse) {
             console.log(error)
           }
         }
-        // const {input_ids, attention_mask} = await classifier.tokenize(text)
-        // const result = await classifier.classify(input_ids, attention_mask)
 
         sendResponse({ 
             received: true, 
@@ -48,13 +44,13 @@ async function handleMessage(message, sender, sendResponse) {
     }
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message.target !== "offscreen") return;
 
     if (message.action === "initialize")
-        initializeClassifier(sendResponse).catch(console.error);
+        initialize(sendResponse)
     if (message.action === "classify")
-        handleMessage(message, sender, sendResponse)
+        classify(message, sendResponse)
 
     return true;
 })

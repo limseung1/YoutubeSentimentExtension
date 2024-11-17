@@ -1,15 +1,12 @@
 
-async function createOffscreen() {
+async function sendInitialize(sendResponse) {
     if (await chrome.offscreen.hasDocument()) return;
     await chrome.offscreen.createDocument({
         url: "offscreen.html",
         reasons: ["BLOBS"],
         justification: "inference",
     });
-}
 
-async function triggerInitialize(message, sender, sendResponse) {
-    await createOffscreen();
     const result = await chrome.runtime.sendMessage({
         target: "offscreen",
         action: "initialize"
@@ -21,7 +18,7 @@ async function triggerInitialize(message, sender, sendResponse) {
     });
 }
 
-async function handleMessage(message, sender, sendResponse) {
+async function sendClassify(message, sendResponse) {
     const result = await chrome.runtime.sendMessage({
         target: "offscreen",
         action: "classify",
@@ -34,13 +31,13 @@ async function handleMessage(message, sender, sendResponse) {
     });
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message.target !== "background") return;
 
     if (message.action === "initialize") 
-        triggerInitialize(message, sender, sendResponse)
+        sendInitialize(sendResponse)
     if (message.action === "classify") 
-        handleMessage(message, sender, sendResponse)
+        sendClassify(message, sendResponse)
 
     return true; // see https://stackoverflow.com/a/46628145 for more information
 });  

@@ -1,5 +1,5 @@
 import * as ort from 'onnxruntime-web/webgpu';
-import { AutoTokenizer, softmax, PreTrainedTokenizer } from '@xenova/transformers';
+import { softmax, PreTrainedTokenizer } from '@xenova/transformers';
 
 class GoEmotionClassifier {
     constructor() {
@@ -22,6 +22,7 @@ class GoEmotionClassifier {
 
     async initialize() {
         if (this.cachedInstance) return this.cachedInstance;
+
         this.tokenizer = (await fetch(this.tokenizerPath)).json();
         this.session = await ort.InferenceSession.create(this.modelPath, { 
             executionProviders: ['webgpu'],

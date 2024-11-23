@@ -24,14 +24,30 @@ async function runInference({ comments, nodes }) {
     console.log("Inference runtime: ", performance.now() - infStart)
     console.log("Response: ", response)
 
-    label(nodes)
+    label(nodes, response)
 
     return true
 }
 
 
-function label (nodes) {
-    console.log(nodes)
+function label(nodes, response) {
+    const inferenceResults = response.data
+
+    if (inferenceResults.length !== nodes.length) 
+        console.log('Length of predicted and nodes do not match')
+
+    for (let i = 0; i < nodes.length; i++) {
+        const wrapper = nodes[i].querySelector('#comment #content');
+
+        const label = document.createElement('label');
+        label.textContent = inferenceResults[i].prediction;
+        label.style.backgroundColor = 'red';
+        label.style.padding = '0.5rem';
+        label.style.marginRight = '0.25rem';
+
+        // Insert at the beginning using insertBefore
+        wrapper.insertBefore(label, wrapper.firstChild);
+    }
 }
 
 function processComments (commentNodes) {

@@ -26,7 +26,14 @@ async function classify(message, sendResponse) {
             result['text'] = text
             results.push(result)
           } catch (error) {
+            // TODO: sanitize comment for ' and ` symbols
             console.log(error)
+            results.push({
+                prediction: 'Unknown',
+                confidence: 0,
+                scores: {},
+                text: text
+            })
           }
         }
 

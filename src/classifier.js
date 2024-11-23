@@ -1,4 +1,5 @@
 import * as ort from 'onnxruntime-web/webgpu';
+// import * as ort from 'onnxruntime-web';
 import { softmax, PreTrainedTokenizer } from '@xenova/transformers';
 
 class GoEmotionClassifier {
@@ -17,19 +18,14 @@ class GoEmotionClassifier {
             'joy', 'love', 'nervousness', 'optimism', 'pride', 'realization',
             'relief', 'remorse', 'sadness', 'surprise', 'neutral'
         ];
-        this.cachedInstance = null;
     }
 
     async initialize() {
-        if (this.cachedInstance) return this.cachedInstance;
-
         this.tokenizer = (await fetch(this.tokenizerPath)).json();
         this.session = await ort.InferenceSession.create(this.modelPath, { 
             executionProviders: ['webgpu'],
             logSeverityLevel: 3
         });
-        this.cachedInstance = this;
-        return this.cachedInstance;
     }
 
     async createTokenizer() {
@@ -84,27 +80,3 @@ class GoEmotionClassifier {
 export {
     GoEmotionClassifier
 };
-
-
-//  // Not any more efficient than normal classify method
-//  async classifyBatch(texts) {
-//     const tokenizer = await AutoTokenizer.from_pretrained(this.modelName, {
-//         local: true,
-//         revision: 'main',
-//         local_files_only: true
-//     });
-//     const tokens = await tokenizer(texts, {
-//         padding: true,
-//         truncation: true,
-//         maxLength: 512,
-//         return_tensors: 'pt'
-//     });
-//     const inputTensors = {
-//         input_ids: new ort.Tensor('int64', tokens.input_ids.data, tokens.input_ids.dims),
-//         attention_mask: new ort.Tensor('int64', tokens.attention_mask.data, tokens.attention_mask.dims)
-//     };
-//     const outputs = await this.sessionGPU.run(inputTensors);
-//     const logits = outputs[this.sessionGPU.outputNames[0]].data;
-//     const probabilities = softmax(logits, tokens.input_ids.dims[0]);
-//     return []; // stub
-// }

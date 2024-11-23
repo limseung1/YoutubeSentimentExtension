@@ -23,6 +23,7 @@ async function classify(message, sendResponse) {
           try {
             const {input_ids, attention_mask} = await classifier.tokenize(text)
             const result = await classifier.classify(input_ids, attention_mask)
+            result['text'] = text
             results.push(result)
           } catch (error) {
             console.log(error)

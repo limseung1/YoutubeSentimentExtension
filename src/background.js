@@ -1,4 +1,3 @@
-
 async function sendInitialize(sendResponse) {
     if (await chrome.offscreen.hasDocument()) {
         sendResponse( { initialized: false, success: true } )
